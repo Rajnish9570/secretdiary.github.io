@@ -1,49 +1,586 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Member Login</title>
-  <link rel="stylesheet" href="style.css">
-</head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Secret Diary – Private World</title>
 <style>
-  @media(max-width:760px){
-    #imga{
-      display: none;
-    }
-    input{
-      width: 100%;
-      height:50px ;
-    }
-    html{
-      margin: 8px;
-    }
-  
-  }
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+ font-family:Arial,sans-serif;
+ background:linear-gradient(135deg,#090d20,#171333,#251746);
+ color:#fff;min-height:100vh;padding:20px;
+ display:flex;align-items:center;justify-content:center;
+}
+.container{
+ width:100%;max-width:760px;
+ background:#ffffff0c;border:1px solid #ffffff20;
+ border-radius:22px;padding:28px;
+ box-shadow:0 25px 70px #0008;
+ backdrop-filter:blur(20px);
+}
+header{text-align:center;margin-bottom:25px}
+.logo{font-size:45px}
+header h1{font-size:29px;margin:8px}
+header p{color:#aaa8c5;font-size:13px}
+h2{font-size:21px;margin-bottom:17px}
+h3{font-size:17px;margin:15px 0}
+input,textarea{
+ width:100%;padding:14px;margin:8px 0;
+ border:1px solid #ffffff25;border-radius:11px;
+ background:#101329;color:white;outline:none;font-size:15px;
+}
+input:focus,textarea:focus{border-color:#a78bfa}
+textarea{resize:vertical;min-height:190px;line-height:1.6}
+button{
+ border:0;border-radius:10px;padding:12px 15px;
+ cursor:pointer;font-weight:bold;font-size:13px;
+ transition:.2s;
+}
+button:hover{filter:brightness(1.2);transform:translateY(-1px)}
+.primary{background:linear-gradient(90deg,#7657ed,#a34fe1);color:white;width:100%;margin-top:12px}
+.secondary{background:#292c4c;color:white}
+.green{background:#148d70;color:white}
+.red{background:#c9435d;color:white}
+.link{background:none;color:#b9a4ff;padding:8px}
+.hidden{display:none!important}
+.switch{text-align:center;margin-top:17px;color:#aaa8c5;font-size:13px}
+.row{display:flex;gap:9px;align-items:center}
+.password{position:relative}
+.password input{padding-right:52px}
+.eye{
+ position:absolute;right:8px;top:15px;
+ background:none;color:#c6b8ff;font-size:19px;padding:7px;
+}
+.notice{
+ padding:13px;border-radius:11px;
+ background:#f0a33b12;border:1px solid #e8aa5140;
+ color:#ffd89c;font-size:12px;line-height:1.6;margin:13px 0;
+}
+.success{
+ background:#26bc8a16;border:1px solid #26bc8a50;
+ color:#8debc6;padding:14px;border-radius:12px;
+ font-size:13px;line-height:1.6;margin:12px 0;
+}
+.keybox{
+ background:#080c1d;padding:14px;border-radius:10px;
+ overflow-wrap:anywhere;color:#c6aaff;
+ font-family:monospace;margin:12px 0;
+}
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:15px}
+.toolbar h2{margin:0}
+.actions{display:flex;gap:7px;flex-wrap:wrap}
+.actions button{padding:10px}
+.note{
+ background:#ffffff0b;border:1px solid #ffffff18;
+ padding:15px;border-radius:13px;margin:12px 0;
+}
+.note p{color:#c5c5d7;font-size:13px;margin-top:7px;white-space:pre-wrap;overflow-wrap:anywhere}
+.note small{color:#8e8ca9}
+.note-actions{display:flex;gap:7px;margin-top:12px}
+.note-actions button{padding:8px 12px}
+label{font-size:13px;color:#c4bde2}
+#message{font-size:13px;margin-top:12px;line-height:1.5}
+hr{border:0;border-top:1px solid #ffffff20;margin:20px 0}
+.footer{text-align:center;color:#77758f;font-size:11px;margin-top:24px}
+@media(max-width:480px){
+ .container{padding:19px}
+ .toolbar{align-items:flex-start}
+ .actions{width:100%}
+ .actions button{flex:1}
+}
 </style>
+</head>
 <body>
-  <div id="div">
-<img src="gym.png"  id="imga" alt="" height="400px" width="400px">
+<div class="container">
+
+<header>
+ <div class="logo">🔐</div>
+ <h1>Secret Diary</h1>
+ <p>Your memories. Your secrets. Your private world.</p>
+</header>
+
+<!-- REGISTER -->
+<section id="register" class="hidden">
+ <h2>✨ Create Your Account</h2>
+ <input id="regUser" placeholder="Create username" autocomplete="username">
+
+ <div class="password">
+  <input id="regPass" type="password" placeholder="Create password (8+ characters)" autocomplete="new-password">
+  <button class="eye" type="button" onclick="toggleEye('regPass',this)">◉</button>
+ </div>
+ <div class="password">
+  <input id="regConfirm" type="password" placeholder="Confirm password" autocomplete="new-password">
+  <button class="eye" type="button" onclick="toggleEye('regConfirm',this)">◉</button>
+ </div>
+
+ <button class="primary" onclick="register()">Create My Diary →</button>
+ <div class="switch">Already registered? <button class="link" onclick="show('login')">Login</button></div>
+</section>
+
+<!-- LOGIN -->
+<section id="login">
+ <h2>👋 Welcome Back</h2>
+ <input id="loginUser" placeholder="Username" autocomplete="username">
+ <div class="password">
+  <input id="loginPass" type="password" placeholder="Enter password" autocomplete="current-password">
+  <button class="eye" type="button" onclick="toggleEye('loginPass',this)">◉</button>
+ </div>
+ <button class="primary" onclick="login()">🔓 Unlock My Diary</button>
+ <div class="switch">
+  New user? <button class="link" onclick="show('register')">Create Account</button>
+ </div>
+ <div class="switch">
+  <button class="link" onclick="show('forgot')">Forgot Password?</button>
+ </div>
+</section>
+
+<!-- FORGOT -->
+<section id="forgot" class="hidden">
+ <h2>🔑 Recover Your Account</h2>
+ <div class="notice">Enter your username and the Recovery Key generated when you created your account. Without this key, recovery is impossible.</div>
+ <input id="forgotUser" placeholder="Your username">
+ <div class="password">
+  <input id="recoveryInput" placeholder="Enter your recovery key">
+  <button class="eye" type="button" onclick="toggleEye('recoveryInput',this)">◉</button>
+ </div>
+ <div class="password">
+  <input id="resetPass" type="password" placeholder="Create new password (8+ characters)">
+  <button class="eye" type="button" onclick="toggleEye('resetPass',this)">◉</button>
+ </div>
+ <div class="password">
+  <input id="resetConfirm" type="password" placeholder="Confirm new password">
+  <button class="eye" type="button" onclick="toggleEye('resetConfirm',this)">◉</button>
+ </div>
+ <button class="primary" onclick="recover()">Recover & Set New Password</button>
+ <div class="switch"><button class="link" onclick="show('login')">← Back to Login</button></div>
+</section>
+
+<!-- RECOVERY KEY DISPLAY -->
+<section id="recovery" class="hidden">
+ <h2>🎉 Your Diary Is Ready!</h2>
+ <div class="success">
+  Account created successfully. Save your recovery key now. It will not be shown again.
+ </div>
+ <p style="font-size:13px;color:#c7c2df">Your personal recovery key:</p>
+ <div class="keybox" id="keyDisplay"></div>
+ <button class="secondary" onclick="copyKey()">Copy Recovery Key</button>
+ <button class="primary" onclick="finishRegistration()">I Have Saved My Key – Continue</button>
+ <div class="notice">Never share this key. Anyone with your recovery key can recover and access your diary.</div>
+</section>
+
+<!-- DIARY -->
+<section id="diary" class="hidden">
+ <div class="toolbar">
+  <h2>📖 My Diary</h2>
+  <div class="actions">
+   <button class="secondary" onclick="show('change')">🔑 Password</button>
+   <button class="red" onclick="logout()">Lock 🔒</button>
   </div>
-  <div id="div1">
-    <h1>
-    <img src="logo.png" id="img" alt="" height="30px" width="30px"  style="background:white;">
-  FitNation India</h1>
-  <p>Member Login Page</p>
-  <form action="" method="post">
-    <input type="text" placeholder="@gmail.com" name="" id="email"><br><br>
-    Email addess 
-    <br> <br>
-    <input type="password" name=" " id="password"><br><br>
-    Password 
-    <br> <br>
-    <input type="button" value="Login" id="btn" onclick="login()">
-  </form>
-  <br> 
-  <a href="forget.html">Forget password?</a> <br> <br>
-  Don't have an account? <a href="register.html">Register here</a>
+ </div>
+
+ <div class="success">🔒 Encrypted private diary | User: <b id="currentName"></b></div>
+
+ <h3 id="editorHeading">✍️ Write a New Note</h3>
+ <input id="noteTitle" placeholder="Note title">
+ <textarea id="noteBody" placeholder="Dear Diary... Write your thoughts here. 💜"></textarea>
+
+ <div class="row">
+  <button class="primary" onclick="saveNote()" id="saveButton">Save Note</button>
+  <button class="secondary" onclick="clearEditor()">Clear</button>
+ </div>
+
+ <hr>
+ <h3>📚 My Private Notes</h3>
+ <input id="searchNotes" placeholder="🔍 Search your notes..." oninput="renderNotes()">
+ <div id="notesList"></div>
+ <div class="notice">Notes are encrypted in your browser. Avoid clearing browser data unless you have a backup.</div>
+</section>
+
+<!-- CHANGE PASSWORD -->
+<section id="change" class="hidden">
+ <h2>🔐 Change Password</h2>
+ <div class="notice">For your security, your current password is compulsory.</div>
+ <div class="password">
+  <input id="oldPass" type="password" placeholder="Current / Old Password">
+  <button class="eye" type="button" onclick="toggleEye('oldPass',this)">◉</button>
+ </div>
+ <div class="password">
+  <input id="newPass" type="password" placeholder="New Password (8+ characters)">
+  <button class="eye" type="button" onclick="toggleEye('newPass',this)">◉</button>
+ </div>
+ <div class="password">
+  <input id="newConfirm" type="password" placeholder="Confirm New Password">
+  <button class="eye" type="button" onclick="toggleEye('newConfirm',this)">◉</button>
+ </div>
+ <button class="primary" onclick="changePassword()">Update Password</button>
+ <button class="secondary" onclick="show('diary')" style="width:100%;margin-top:9px">Back to Diary</button>
+</section>
+
+<div id="message"></div>
+<div class="footer">SECRET DIARY © 2026 • YOUR PRIVATE WORLD 💜</div>
 </div>
 
+<script>
+const $=id=>document.getElementById(id);
+const enc=new TextEncoder();
+const dec=new TextDecoder();
+const PREFIX="private_diary_v3_";
+
+let username="";
+let dataKey=null;
+let notes=[];
+let editingId=null;
+let pendingKey="";
+let busy=false;
+
+function show(id){
+ ["register","login","forgot","recovery","diary","change"].forEach(x=>$(x).classList.add("hidden"));
+ $(id).classList.remove("hidden");
+ $("message").textContent="";
+}
+
+function msg(t,good=false){
+ $("message").style.color=good?"#8debc6":"#ff9eaa";
+ $("message").textContent=t;
+}
+
+function toggleEye(id,btn){
+ const el=$(id);
+ el.type=el.type==="password"?"text":"password";
+ btn.textContent=el.type==="password"?"◉":"◎";
+}
+
+function storageKey(u){return PREFIX+u.toLowerCase()}
+function getAccount(u){
+ try{return JSON.parse(localStorage.getItem(storageKey(u)))}
+ catch(e){return null}
+}
+function putAccount(u,a){
+ localStorage.setItem(storageKey(u),JSON.stringify(a));
+}
+
+function random(n){
+ return crypto.getRandomValues(new Uint8Array(n));
+}
+function b64(a){
+ return btoa(Array.from(a,x=>String.fromCharCode(x)).join(""));
+}
+function un64(s){
+ return Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+}
+function hex(a){
+ return Array.from(a,x=>x.toString(16).padStart(2,"0")).join("");
+}
+
+async function derive(password,salt){
+ const material=await crypto.subtle.importKey(
+  "raw",enc.encode(password),"PBKDF2",false,["deriveKey"]);
+ return crypto.subtle.deriveKey({
+  name:"PBKDF2",salt,iterations:310000,hash:"SHA-256"
+ },material,{name:"AES-GCM",length:256},false,["encrypt","decrypt"]);
+}
+
+async function encrypt(key,obj){
+ const iv=random(12);
+ const result=await crypto.subtle.encrypt(
+  {name:"AES-GCM",iv},key,enc.encode(JSON.stringify(obj)));
+ return {iv:b64(iv),cipher:b64(new Uint8Array(result))};
+}
+async function decrypt(key,obj){
+ const result=await crypto.subtle.decrypt(
+  {name:"AES-GCM",iv:un64(obj.iv)},key,un64(obj.cipher));
+ return JSON.parse(dec.decode(result));
+}
+
+async function wrap(key,secret){
+ return encrypt(key,{secret:b64(secret)});
+}
+async function unwrap(key,wrapped){
+ return un64((await decrypt(key,wrapped)).secret);
+}
+
+function validPassword(p){return p.length>=8}
+function validUser(u){return /^[a-zA-Z0-9_.-]{3,30}$/.test(u)}
+
+async function register(){
+ if(busy)return;
+ const u=$("regUser").value.trim();
+ const p=$("regPass").value;
+ const c=$("regConfirm").value;
+
+ if(!validUser(u))return msg("Username: 3-30 letters, numbers, dots, _ or -.");
+ if(!validPassword(p))return msg("Password must have at least 8 characters.");
+ if(p!==c)return msg("Passwords do not match.");
+ if(getAccount(u))return msg("Username already exists.");
+
+ busy=true;
+ try{
+  const master=random(32);
+  const passSalt=random(16);
+  const recoverySalt=random(16);
+  const recoveryKey=hex(random(24));
+
+  const passKey=await derive(p,passSalt);
+  const recoveryDerived=await derive(recoveryKey,recoverySalt);
+
+  const account={
+   version:3,
+   salt:b64(passSalt),
+   recoverySalt:b64(recoverySalt),
+   passwordWrap:await wrap(passKey,master),
+   recoveryWrap:await wrap(recoveryDerived,master),
+   vault:await encrypt(await crypto.subtle.importKey(
+    "raw",master,"AES-GCM",false,["encrypt","decrypt"]),{notes:[]})
+  };
+
+  putAccount(u,account);
+  username=u;
+  dataKey=await crypto.subtle.importKey(
+   "raw",master,"AES-GCM",false,["encrypt","decrypt"]);
+  notes=[];
+  pendingKey=recoveryKey;
+  $("keyDisplay").textContent=recoveryKey;
+  show("recovery");
+ }catch(e){msg("Could not create account. Please try again.")}
+ finally{busy=false}
+}
+
+function finishRegistration(){
+ pendingKey="";
+ enterDiary();
+}
+
+async function unlockWithPassword(u,p){
+ const a=getAccount(u);
+ if(!a)throw Error("Account not found");
+
+ const k=await derive(p,un64(a.salt));
+ const master=await unwrap(k,a.passwordWrap);
+ const key=await crypto.subtle.importKey(
+  "raw",master,"AES-GCM",false,["encrypt","decrypt"]);
+ const vault=await decrypt(key,a.vault);
+
+ username=u;
+ dataKey=key;
+ notes=vault.notes||[];
+}
+
+async function login(){
+ if(busy)return;
+ const u=$("loginUser").value.trim();
+ const p=$("loginPass").value;
+ if(!u||!p)return msg("Enter username and password.");
+
+ busy=true;
+ try{
+  await unlockWithPassword(u,p);
+  $("loginPass").value="";
+  enterDiary();
+ }catch(e){msg("Incorrect username or password.")}
+ finally{busy=false}
+}
+
+function enterDiary(){
+ $("currentName").textContent=username;
+ editingId=null;
+ clearEditor();
+ show("diary");
+ renderNotes();
+}
+
+async function persist(){
+ const a=getAccount(username);
+ if(!a||!dataKey)throw Error("Account unavailable");
+ a.vault=await encrypt(dataKey,{notes});
+ putAccount(username,a);
+}
+
+async function saveNote(){
+ if(busy)return;
+ const title=$("noteTitle").value.trim();
+ const body=$("noteBody").value.trim();
+ if(!title&&!body)return msg("Write something first.");
+
+ busy=true;
+ try{
+  if(editingId){
+   const n=notes.find(x=>x.id===editingId);
+   if(n){n.title=title||"Untitled";n.body=body;n.updated=Date.now()}
+  }else{
+   notes.unshift({id:hex(random(12)),title:title||"Untitled",
+    body,created:Date.now(),updated:Date.now()});
+  }
+  await persist();
+  clearEditor();
+  renderNotes();
+  msg("Your note has been securely saved. ✓",true);
+ }catch(e){msg("Save failed. Please try again.")}
+ finally{busy=false}
+}
+
+function clearEditor(){
+ editingId=null;
+ $("noteTitle").value="";
+ $("noteBody").value="";
+ $("editorHeading").textContent="✍️ Write a New Note";
+ $("saveButton").textContent="Save Note";
+}
+
+function editNote(id){
+ const n=notes.find(x=>x.id===id);
+ if(!n)return;
+ editingId=id;
+ $("noteTitle").value=n.title;
+ $("noteBody").value=n.body;
+ $("editorHeading").textContent="✏️ Edit Note";
+ $("saveButton").textContent="Update Note";
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+
+async function deleteNote(id){
+ const n=notes.find(x=>x.id===id);
+ if(!n||!confirm("Permanently delete this note?"))return;
+ notes=notes.filter(x=>x.id!==id);
+ try{await persist();renderNotes();msg("Note deleted.",true)}
+ catch(e){msg("Could not delete note.")}
+}
+
+function renderNotes(){
+ const q=$("searchNotes").value.toLowerCase();
+ const list=notes.filter(n=>(n.title+" "+n.body).toLowerCase().includes(q));
+ $("notesList").innerHTML="";
+ if(!list.length){
+  $("notesList").innerHTML='<p style="color:#9995b4;text-align:center;padding:20px">No notes found 📭</p>';
+  return;
+ }
+ list.forEach(n=>{
+  const card=document.createElement("div");
+  card.className="note";
+  const title=document.createElement("b");
+  title.textContent=n.title;
+  const body=document.createElement("p");
+  body.textContent=n.body;
+  const date=document.createElement("small");
+  date.textContent=new Date(n.updated||n.created).toLocaleString();
+  const actions=document.createElement("div");
+  actions.className="note-actions";
+  const edit=document.createElement("button");
+  edit.className="secondary";edit.textContent="✏️ Edit";
+  edit.onclick=()=>editNote(n.id);
+  const del=document.createElement("button");
+  del.className="red";del.textContent="🗑 Delete";
+  del.onclick=()=>deleteNote(n.id);
+  actions.append(edit,del);
+  card.append(title,date,body,actions);
+  $("notesList").append(card);
+ });
+}
+
+async function changePassword(){
+ if(busy)return;
+ const old=$("oldPass").value;
+ const p=$("newPass").value;
+ const c=$("newConfirm").value;
+ if(!old||!p)return msg("Enter old and new passwords.");
+ if(!validPassword(p))return msg("New password must be at least 8 characters.");
+ if(p!==c)return msg("New passwords do not match.");
+ if(old===p)return msg("Choose a different new password.");
+
+ busy=true;
+ try{
+  const a=getAccount(username);
+  const oldKey=await derive(old,un64(a.salt));
+  const master=await unwrap(oldKey,a.passwordWrap);
+
+  const verified=await crypto.subtle.importKey(
+   "raw",master,"AES-GCM",false,["encrypt","decrypt"]);
+  await decrypt(verified,a.vault);
+
+  const salt=random(16);
+  const newKey=await derive(p,salt);
+  a.salt=b64(salt);
+  a.passwordWrap=await wrap(newKey,master);
+  putAccount(username,a);
+
+  $("oldPass").value="";
+  $("newPass").value="";
+  $("newConfirm").value="";
+  show("diary");
+  msg("Password changed successfully! 🔐",true);
+ }catch(e){msg("Incorrect current password. Password not changed.")}
+ finally{busy=false}
+}
+
+async function recover(){
+ if(busy)return;
+ const u=$("forgotUser").value.trim();
+ const r=$("recoveryInput").value.trim().toLowerCase();
+ const p=$("resetPass").value;
+ const c=$("resetConfirm").value;
+
+ if(!u||!r||!p)return msg("Complete all fields.");
+ if(!validPassword(p))return msg("New password must have at least 8 characters.");
+ if(p!==c)return msg("New passwords do not match.");
+
+ busy=true;
+ try{
+  const a=getAccount(u);
+  if(!a)throw Error("Invalid");
+  const rk=await derive(r,un64(a.recoverySalt));
+  const master=await unwrap(rk,a.recoveryWrap);
+  const key=await crypto.subtle.importKey(
+   "raw",master,"AES-GCM",false,["encrypt","decrypt"]);
+  const vault=await decrypt(key,a.vault);
+
+  const salt=random(16);
+  const pk=await derive(p,salt);
+  a.salt=b64(salt);
+  a.passwordWrap=await wrap(pk,master);
+  putAccount(u,a);
+
+  username=u;
+  dataKey=key;
+  notes=vault.notes||[];
+  $("forgotUser").value="";
+  $("recoveryInput").value="";
+  $("resetPass").value="";
+  $("resetConfirm").value="";
+  enterDiary();
+  msg("Account recovered! Your notes are safe. ✓",true);
+ }catch(e){msg("Invalid username or recovery key.")}
+ finally{busy=false}
+}
+
+function copyKey(){
+ if(!pendingKey)return;
+ if(navigator.clipboard && window.isSecureContext){
+  navigator.clipboard.writeText(pendingKey)
+   .then(()=>msg("Recovery key copied. Save it safely.",true))
+   .catch(()=>msg("Please copy the displayed key manually."));
+ }else{
+  msg("Please select and copy the recovery key manually.");
+ }
+}
+
+function logout(){
+ username="";
+ dataKey=null;
+ notes=[];
+ editingId=null;
+ $("noteTitle").value="";
+ $("noteBody").value="";
+ $("loginPass").value="";
+ show("login");
+ msg("Diary locked successfully.",true);
+}
+
+// Security availability
+if(!window.crypto||!crypto.subtle){
+ msg("Secure encryption requires HTTPS or localhost. Please open through a secure connection.");
+ show("login");
+}
+</script>
 </body>
 </html>
